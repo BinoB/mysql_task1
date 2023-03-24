@@ -1,0 +1,241 @@
+
+The Following are the tables has to be in your database & model deisgn:
+users
+codekata
+attendance
+topics
+tasks
+company_drives
+mentors
+students_activated_courses
+courses
+
+The following are the queries need to be executed
+
+1. Create tables for the above list given
+
+        -- create the tables
+
+        CREATE TABLE users (
+            user_id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(50) NOT NULL,
+            email VARCHAR(50) NOT NULL,
+            password VARCHAR(50) NOT NULL
+        );
+
+
+        CREATE TABLE codekata (
+            problem_id INT AUTO_INCREMENT PRIMARY KEY,
+            problem_title VARCHAR(50) NOT NULL,
+            problem_description TEXT NOT NULL,
+            difficulty_level INT NOT NULL
+        );
+
+        CREATE TABLE attendance (
+            attendance_id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT NOT NULL,
+            date_attended DATE NOT NULL,
+            is_present BOOLEAN NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(user_id)
+        );
+
+
+        CREATE TABLE topics (
+            topic_id INT AUTO_INCREMENT PRIMARY KEY,
+            topic_title VARCHAR(50) NOT NULL,
+            topic_description TEXT NOT NULL
+        );
+
+        CREATE TABLE tasks (
+            task_id INT AUTO_INCREMENT PRIMARY KEY,
+            task_title VARCHAR(50) NOT NULL,
+            task_description TEXT NOT NULL,
+            task_status ENUM('todo', 'inprogress', 'done') NOT NULL,
+            user_id INT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(user_id)
+        );
+
+
+
+        CREATE TABLE company_drives (
+            drive_id INT AUTO_INCREMENT PRIMARY KEY,
+            drive_title VARCHAR(50) NOT NULL,
+            drive_description TEXT NOT NULL,
+            drive_date DATE NOT NULL
+        );
+
+
+
+        CREATE TABLE mentors (
+            mentor_id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(50) NOT NULL,
+            email VARCHAR(50) NOT NULL
+        );
+
+
+
+        CREATE TABLE students_activated_courses (
+            student_id INT NOT NULL,
+            course_id INT NOT NULL,
+            date_activated DATE NOT NULL,
+            FOREIGN KEY (student_id) REFERENCES users(user_id),
+            FOREIGN KEY (course_id) REFERENCES courses(course_id),
+            PRIMARY KEY (student_id, course_id)
+        );
+
+
+
+        CREATE TABLE courses (
+            course_id INT AUTO_INCREMENT PRIMARY KEY,
+            course_name VARCHAR(50) NOT NULL,
+            course_description TEXT NOT NULL
+        );
+
+
+
+
+2. insert at least 5 rows of values in each table
+
+            -- insert data into the tables
+
+            INSERT INTO users (name, email, password) VALUES
+                ('John', 'john@gmail.com', '123456'),
+                ('Sam', 'sam@gmail.com', 'password'),
+                ('Ram', 'ram@gmail.com', '1234'),
+                ('David', 'david@gmail.com', 'password'),
+                ('Johnson', 'johnson@gmail.com', '123456');
+
+
+            -- insert into codekata table
+
+
+            INSERT INTO codekata (problem_title, problem_description , difficulty_level) VALUES 
+            ( 'Two Sum', 'Python', 'Easy'),
+            ( 'Reverse Integer', 'Python', 'Easy'),
+            ( 'Valid Parentheses', 'C++', 'Easy'),
+            ('Longest Common Prefix', 'Java', 'Easy'),
+            ('Best Time to Buy and Sell Stock', 'Python', 'Easy');
+
+
+
+            -- insert into attendance table
+
+            INSERT INTO attendance (user_id, date_attended, is_present) VALUES 
+            (1, '2022-01-01', TRUE),
+            (2, '2022-01-01', TRUE),
+            (3, '2022-01-01', FALSE),
+            (4, '2022-01-01', TRUE),
+            (5, '2022-01-01', TRUE);
+
+
+
+            -- insert into topics table
+
+
+
+            INSERT INTO topics (topic_title, topic_description) VALUES 
+            ('Arrays', 'Easy'),
+            ('Strings', 'Medium'),
+            ('Graphs', 'Hard'),
+            ('Dynamic Programming', 'Medium'),
+            ('Sorting Algorithms', 'Easy');
+
+
+
+            -- insert into tasks table
+
+
+
+            INSERT INTO tasks (user_id, task_title, task_description, task_status) VALUES 
+            (1, 'Complete CodeKata Problems', 'Solve at least 10 CodeKata problems', 'todo'),
+            (2, 'Build a Web App', 'Develop a web app using React and Node.js', 'inprogress'),
+            (3, 'Implement Graph Algorithms', 'Implement Dijkstra and Bellman-Ford algorithms', 'todo'),
+            (4, 'Design a Database', 'Design a database schema for an e-commerce website', 'done'),
+            (5, 'Write Unit Tests', 'Write unit tests for a Python library', 'done');
+
+            -- insert into company_drives table
+
+
+            INSERT INTO company_drives (drive_title, drive_date, job_title) VALUES 
+            ('Microsoft Hiring Drive', '2022-05-01', 'Software Engineer'),
+            ('Amazon Recruitment Drive', '2022-06-15', 'Data Scientist'),
+            ('Google Career Fair', '2022-07-01', 'Product Manager'),
+            ('Facebook Tech Hiring Event', '2022-08-15', 'Software Engineer'),
+            ('Apple Campus Placement Drive', '2022-09-01', 'Hardware Engineer');
+
+            -- insert into mentors table
+
+
+
+            INSERT INTO mentors (name, email) VALUES 
+            ('Arun', 'arun@mentor.com'),
+            ('Suresh', 'suresh@mentor.com'),
+            ('vijay', 'vijay@mentor.com'),
+            ('Aravind', 'aravind@mentor.com'),
+            ('krishna', 'krishna@mentor.com');
+
+
+            -- insert into students_activated_courses table
+
+
+
+            INSERT INTO students_activated_courses (student_id, course_id, date_activated) VALUES 
+            (1, 2, '2022-02-01'),
+            (2, 1, '2022-02-15'),
+            (3, 3, '2022-03-01'),
+            (4, 2, '2022-03-15'),
+            (5, 1, '2022-04-01');
+
+
+
+            -- insert into courses table
+
+
+            INSERT INTO courses (course_name, course_description) VALUES 
+            ('Web Development', 'Learn how to build web applications.'),
+            ('Data Science', 'Learn how to work with data and gain insights.'),
+            ('Machine Learning', 'Learn how to build intelligent systems.'),
+            ('Database Management', 'Learn how to design and manage databases.'),
+            ('Mobile App Development', 'Learn how to build mobile applications.');
+
+
+
+
+3. get number problems solved in codekata by combining the users
+
+        SELECT users.username, COUNT(DISTINCT solutions.problem_id) as total_problems_solved
+        FROM users
+        INNER JOIN solutions ON users.user_id = solutions.user_id
+        GROUP BY users.username;
+
+4. display the no of company drives attended by a user
+
+        SELECT users.username, COUNT(DISTINCT attendance.company_drive_id) as total_drives_attended
+        FROM users
+        INNER JOIN attendance ON users.user_id = attendance.user_id
+        GROUP BY users.username;
+
+
+5. combine and display students_activated_courses and courses for a specific user groping them based on the course
+
+        SELECT courses.course_name, COUNT(students_activated_courses.user_id) as total_students_activated
+        FROM courses
+        INNER JOIN students_activated_courses ON courses.course_id = students_activated_courses.course_id
+        WHERE students_activated_courses.user_id = <user_id>
+        GROUP BY courses.course_name;
+
+
+6. list all the mentors
+
+        SELECT * FROM mentors;
+
+
+7. list the number of students that are assigned for a mentor
+
+        SELECT mentors.name, COUNT(students.student_id) as total_students_assigned
+        FROM mentors
+        INNER JOIN students ON mentors.mentor_id = students.mentor_id
+        GROUP BY mentors.name;
+
+
+
